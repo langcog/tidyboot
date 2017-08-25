@@ -1,0 +1,16 @@
+Package: tidyboot
+Type: Package
+Title: Tidyverse-compatible bootstrapping
+Version: 0.1.0
+Authors@R: c(
+    person("Mika", "Braginsky", email = "mika.br@gmail.com", role = c("aut", "cre")),
+    person("Daniel", "Yurovsky", email = "dyurovsky@gmail.com", role = c("aut")),
+    person("Kyle", "MacDonald", email = "kylem412@gmail.com", role = c("aut"))
+    )
+Description: Tidyverse-compatible bootstrapping
+License: GPL-3
+URL: https://github.com/langcog/tidyboot
+BugReports: http://github.com/langcog/tidyboot/issues
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 6.0.1
