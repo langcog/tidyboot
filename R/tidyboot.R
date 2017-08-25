@@ -39,7 +39,7 @@ multi_boot.numeric <- function(data,
   }
 
   all_samples <- data.frame(sample = replicate(nboot, one_sample())) %>%
-    dplyr::summarise_each(dplyr::funs_(formulas), sample)
+    dplyr::summarise_at(dplyr::vars(sample), dplyr::funs_(formulas))
 
   if (length(statistics_functions) == 1) {
     all_samples <- all_samples %>%
@@ -109,9 +109,9 @@ multi_boot.logical <- function(data,
 #' multi_boot(data = bind_rows(gauss1, gauss2),
 #'            summary_function = function(df) summarise(df, mean = mean(value)),
 #'            summary_groups = c("condition"),
-#'            statistics_functions = function(df) summarise_each(df,
-#'                                                               funs("ci_upper", "mean", "ci_lower"),
-#'                                                               mean),
+#'            statistics_functions = function(df) summarise_at(df,
+#'                                                             vars(mean),
+#'                                                             funs("ci_upper", "mean", "ci_lower"))
 #'            statistics_groups = c("condition"),
 #'            nboot = 100, replace = TRUE)
 #' @export
@@ -150,7 +150,8 @@ multi_boot.data.frame <- function(data,
     statistics_formulas <- sapply(statistics_functions,
                                   function(x) lazyeval::interp(~fun, fun = x))
     call_statistics_functions <- function(df) {
-      dplyr::summarise_each(df, dplyr::funs_(statistics_formulas), summary)
+      df %>% dplyr::summarise_at(dplyr::vars(summary),
+                                 dplyr::funs_(statistics_formulas))
     }
   }
 
@@ -218,7 +219,7 @@ multi_boot.data.frame <- function(data,
 #' ci_upper <- function(x) {quantile(x, 0.975)}
 #' df <- bind_rows(gauss1, gauss2) %>%
 #'  group_by(condition)
-#' multi_boot_standard(data = df, column = "value")
+#'  multi_boot_standard(data = df, column = "value")
 #' @export
 multi_boot_standard <- function(data, column, na.rm = NULL,
                                 empirical_function = "mean",
@@ -239,7 +240,8 @@ multi_boot_standard <- function(data, column, na.rm = NULL,
     )
 
     statistics_formulas <- function(df)
-      dplyr::summarise_each(df, dplyr::funs_(statistics_funs), summary)
+      df %>% dplyr::summarise_at(dplyr::vars(summary),
+                                 dplyr::funs_(statistics_funs))
 
 
   } else {
