@@ -4,8 +4,7 @@ Title: Tidyverse-compatible bootstrapping
 Version: 0.1.0
 Authors@R: c(
     person("Mika", "Braginsky", email = "mika.br@gmail.com", role = c("aut", "cre")),
-    person("Daniel", "Yurovsky", email = "dyurovsky@gmail.com", role = c("aut")),
-    person("Kyle", "MacDonald", email = "kylem412@gmail.com", role = c("aut"))
+    person("Daniel", "Yurovsky", email = "dyurovsky@gmail.com", role = c("aut"))
     )
 Description: Tidyverse-compatible bootstrapping
 Depends: R (>= 3.3.3)
@@ -19,4 +18,6 @@ Imports:
   assertthat,
   dplyr,
   lazyeval,
+  purrr,
+  rlang,
   stats
