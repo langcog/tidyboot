@@ -109,7 +109,7 @@ tidyboot.logical <- function(data,
 #'                                                           vars(mean),
 #'                                                           funs(ci_upper, mean, ci_lower)),
 #'          statistics_groups = "condition",
-#'          nboot = 100, replace = TRUE)
+#'          nboot = 10, replace = TRUE)
 #' @export
 tidyboot.data.frame <- function(data,
                                 summary_function = mean,
@@ -151,7 +151,8 @@ tidyboot.data.frame <- function(data,
     }
   }
 
-  summary_groups <- chr_to_quo(summary_groups)
+  if(!is.null(summary_groups))
+    summary_groups <- chr_to_quo(summary_groups)
 
   one_sample <- function(df, call_summary_function, summary_groups, replace) {
     function(k) {
@@ -207,7 +208,7 @@ tidyboot.data.frame <- function(data,
 #' gauss2 <- data.frame(value = rnorm(1000, mean = 2, sd = 3), condition = 2)
 #' df <- bind_rows(gauss1, gauss2) %>%
 #'  group_by(condition)
-#'  tidyboot_default(data = df, column = value)
+#'  tidyboot_default(data = df, column = value, nboot = 10)
 #' @export
 tidyboot_default <- function(data, column, na.rm = NULL,
                              empirical_function = mean,
@@ -248,9 +249,18 @@ tidyboot_default <- function(data, column, na.rm = NULL,
   # }
 
   booted_data <- tidyboot(data, summary_function = empirical_function,
-                          column = column,
+                          column = !!column,
                           statistics_functions = statistics_functions,
                           nboot = nboot)
+
+  mean_df <- data %>%
+    dplyr::summarise_at(dplyr::vars(!!column), dplyr::funs(!!empirical_function))
+
+  if(nrow(mean_df) > 1)
+    dplyr::left_join(mean_df, booted_data,
+                     by = as.character(dplyr::groups(data)))
+  else
+    dplyr::bind_cols(mean_df, booted_data)
 
   # call_empirical_function(data) %>%
   #   dplyr::left_join(booted_data) %>%
