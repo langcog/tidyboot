@@ -18,6 +18,7 @@ Imports:
   assertthat,
   dplyr,
   lazyeval,
+  modelr,
   purrr,
   rlang,
   stats

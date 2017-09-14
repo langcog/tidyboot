@@ -6,8 +6,7 @@
 \usage{
 \method{tidyboot}{data.frame}(data, summary_function = mean, column = NULL,
   summary_groups = NULL, statistics_functions,
-  statistics_groups = summary_groups, nboot = 1000, size = 1,
-  replace = TRUE, ...)
+  statistics_groups = summary_groups, nboot = 1000, ...)
 }
 \arguments{
 \item{data}{A data frame.}
@@ -35,11 +34,6 @@ data frame of summary values from all samples.}
 \item{nboot}{The number of bootstrap samples to take (defaults to
 \code{1000}).}
 
-\item{size}{The fraction of rows to sample (defaults to 1).}
-
-\item{replace}{Logical indicating whether to sample with replacement
-(defaults to \code{TRUE}).}
-
 \item{...}{Other arguments passed from generic.}
 }
 \description{
@@ -48,17 +42,16 @@ Computes arbitrary bootstrap statistics on univariate data.
 \examples{
 ## Mean and 95\% confidence interval for 1000 samples from two different normal distributions
 require(dplyr)
-gauss1 <- data.frame(value = rnorm(1000, mean = 0, sd = 1), condition = 1)
-gauss2 <- data.frame(value = rnorm(1000, mean = 2, sd = 3), condition = 2)
+gauss1 <- data_frame(value = rnorm(1000, mean = 0, sd = 1), condition = 1)
+gauss2 <- data_frame(value = rnorm(1000, mean = 2, sd = 3), condition = 2)
 tidyboot(data = bind_rows(gauss1, gauss2),
          summary_function = mean, column = value, summary_groups = "condition",
          statistics_functions = list("ci_lower" = ci_lower, "mean" = mean, "ci_upper" = ci_upper))
 tidyboot(data = bind_rows(gauss1, gauss2),
-         summary_function = function(df) summarise(df, mean = mean(value)),
+         summary_function = function(df) df \%>\% summarise(mean = mean(value)),
          summary_groups = "condition",
-         statistics_functions = function(df) summarise_at(df,
-                                                          vars(mean),
-                                                          funs(ci_upper, mean, ci_lower)),
+         statistics_functions = function(df) df \%>\%
+           summarise_at(vars(mean), funs(ci_upper, mean, ci_lower)),
          statistics_groups = "condition",
-         nboot = 100, replace = TRUE)
+         nboot = 100)
 }

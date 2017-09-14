@@ -89,27 +89,23 @@ tidyboot.logical <- function(data,
 #'   \code{statistics_functions} (defaults to \code{summary_groups}).
 #' @param nboot The number of bootstrap samples to take (defaults to
 #'   \code{1000}).
-#' @param size The fraction of rows to sample (defaults to 1).
-#' @param replace Logical indicating whether to sample with replacement
-#'   (defaults to \code{TRUE}).
 #' @param ... Other arguments passed from generic.
 #'
 #' @examples
 #' ## Mean and 95% confidence interval for 1000 samples from two different normal distributions
 #' require(dplyr)
-#' gauss1 <- data.frame(value = rnorm(1000, mean = 0, sd = 1), condition = 1)
-#' gauss2 <- data.frame(value = rnorm(1000, mean = 2, sd = 3), condition = 2)
+#' gauss1 <- data_frame(value = rnorm(1000, mean = 0, sd = 1), condition = 1)
+#' gauss2 <- data_frame(value = rnorm(1000, mean = 2, sd = 3), condition = 2)
 #' tidyboot(data = bind_rows(gauss1, gauss2),
 #'          summary_function = mean, column = value, summary_groups = "condition",
 #'          statistics_functions = list("ci_lower" = ci_lower, "mean" = mean, "ci_upper" = ci_upper))
 #' tidyboot(data = bind_rows(gauss1, gauss2),
-#'          summary_function = function(df) summarise(df, mean = mean(value)),
+#'          summary_function = function(df) df %>% summarise(mean = mean(value)),
 #'          summary_groups = "condition",
-#'          statistics_functions = function(df) summarise_at(df,
-#'                                                           vars(mean),
-#'                                                           funs(ci_upper, mean, ci_lower)),
+#'          statistics_functions = function(df) df %>%
+#'            summarise_at(vars(mean), funs(ci_upper, mean, ci_lower)),
 #'          statistics_groups = "condition",
-#'          nboot = 100, replace = TRUE)
+#'          nboot = 100)
 #' @export
 tidyboot.data.frame <- function(data,
                                 summary_function = mean,
@@ -117,9 +113,7 @@ tidyboot.data.frame <- function(data,
                                 summary_groups = NULL,
                                 statistics_functions,
                                 statistics_groups = summary_groups,
-                                nboot = 1000,
-                                size = 1,
-                                replace = TRUE, ...) {
+                                nboot = 1000, ...) {
 
   assertthat::assert_that(all(statistics_groups %in% summary_groups))
 
@@ -153,31 +147,31 @@ tidyboot.data.frame <- function(data,
 
   summary_groups <- chr_to_quo(summary_groups)
 
-  one_sample <- function(df, call_summary_function, summary_groups, replace) {
-    function(k) {
-      if (!is.null(summary_groups)) {
-        df <- df %>% dplyr::group_by(!!!summary_groups)
-      }
-      df %>%
-        dplyr::sample_frac(size = size, replace = replace) %>%
-        call_summary_function() %>%
-        dplyr::mutate(sample = k)
-    }
+  if (!is.null(summary_groups)) {
+    data <- data %>% dplyr::group_by(!!!summary_groups)
   }
 
-  all_samples <- 1:nboot %>%
-    purrr::map_df(one_sample(data, call_summary_function, summary_groups,
-                             replace))
+  samples <- data %>% modelr::bootstrap(n = nboot)
 
-  if (is.null(summary_groups) & !is.null(original_groups))
-    all_samples <- all_samples %>% dplyr::group_by(!!!original_groups)
+  summarise_sample <- function(df) {
+    if (!is.null(summary_groups)) {
+      df <- df %>% dplyr::group_by(!!!summary_groups)
+    }
+    df %>% call_summary_function()
+  }
+
+  sample_vals <- samples$strap %>%
+    purrr::map_df(~.x$data %>% summarise_sample)
+
+  if (is.null(statistics_groups) & !is.null(original_groups))
+    sample_vals <- sample_vals %>% dplyr::group_by(!!!original_groups)
 
   if (!is.null(statistics_groups)) {
     statistics_groups <- chr_to_quo(statistics_groups)
-    all_samples <- all_samples %>% dplyr::group_by(!!!statistics_groups)
+    sample_vals <- sample_vals %>% dplyr::group_by(!!!statistics_groups)
   }
 
-  booted_vals <- call_statistics_functions(all_samples)
+  booted_vals <- call_statistics_functions(sample_vals)
 
   return(booted_vals)
 }
