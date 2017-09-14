@@ -4,32 +4,25 @@
 \alias{tidyboot.data.frame}
 \title{Non-parametric bootstrap for data frames}
 \usage{
-\method{tidyboot}{data.frame}(data, summary_function = mean, column = NULL,
-  summary_groups = NULL, statistics_functions,
-  statistics_groups = summary_groups, nboot = 1000, ...)
+\method{tidyboot}{data.frame}(data, column = NULL, summary_function = mean,
+  statistics_functions, nboot = 1000, ...)
 }
 \arguments{
 \item{data}{A data frame.}
-
-\item{summary_function}{A function to be computed over each set of samples as
-a data frame, or a string that is the name of the function to be computed
-over each set of samples as a single column of a data frame indicated by
-\code{column} (defaults to \code{mean}).}
 
 \item{column}{A column of \code{data} to bootstrap over (if not supplied,
 summary_function and statistic_function must operate over the appropriate
 data frame).}
 
-\item{summary_groups}{A vector of strings that are column names of
-\code{data} indicating how it should be grouped before applying
-\code{summary_function}.}
+\item{summary_function}{A function to be computed over each set of samples as
+a data frame, or a function to be computed over each set of samples as a
+single column of a data frame indicated by \code{column} (defaults to
+\code{mean}).}
 
-\item{statistics_functions}{A named list of functions to be computed over the
-data frame of summary values from all samples.}
-
-\item{statistics_groups}{A vector of strings that are column names of
-\code{data} indicating how it should be grouped before applying
-\code{statistics_functions} (defaults to \code{summary_groups}).}
+\item{statistics_functions}{A function to be computed over each set of
+samples as a data frame, or a named list of functions to be computed over
+each set of samples as a single column of a data frame indicated by
+\code{column}.}
 
 \item{nboot}{The number of bootstrap samples to take (defaults to
 \code{1000}).}
@@ -44,14 +37,12 @@ Computes arbitrary bootstrap statistics on univariate data.
 require(dplyr)
 gauss1 <- data_frame(value = rnorm(1000, mean = 0, sd = 1), condition = 1)
 gauss2 <- data_frame(value = rnorm(1000, mean = 2, sd = 3), condition = 2)
-tidyboot(data = bind_rows(gauss1, gauss2),
-         summary_function = mean, column = value, summary_groups = "condition",
-         statistics_functions = list("ci_lower" = ci_lower, "mean" = mean, "ci_upper" = ci_upper))
-tidyboot(data = bind_rows(gauss1, gauss2),
-         summary_function = function(df) df \%>\% summarise(mean = mean(value)),
-         summary_groups = "condition",
-         statistics_functions = function(df) df \%>\%
-           summarise_at(vars(mean), funs(ci_upper, mean, ci_lower)),
-         statistics_groups = "condition",
-         nboot = 100)
+df <- bind_rows(gauss1, gauss2)
+df \%>\% group_by(condition) \%>\%
+  tidyboot(column = value, summary_function = mean,
+           statistics_functions = list("ci_lower" = ci_lower, "mean" = mean, "ci_upper" = ci_upper))
+df \%>\% group_by(condition) \%>\%
+  tidyboot(summary_function = function(x) x \%>\% summarise(mean = mean(value)),
+           statistics_functions = function(x) x \%>\%
+           summarise_at(vars(mean), funs(ci_upper, mean, ci_lower)))
 }
