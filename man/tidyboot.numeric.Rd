@@ -31,9 +31,9 @@ set of summary values from all samples.}
 Computes arbitrary bootstrap statistics on univariate data.
 }
 \examples{
-## Mean and 95\% confidence interval for 1000 samples from a normal distribution
-x <- rnorm(1000, mean = 0, sd = 1)
+## Mean and 95\% confidence interval for 500 samples from a normal distribution
+x <- rnorm(500, mean = 0, sd = 1)
 tidyboot(x, statistics_functions = list("ci_lower" = ci_lower,
-                                          "mean" = mean,
-                                          "ci_upper" = ci_upper))
+                                        "mean" = mean,
+                                        "ci_upper" = ci_upper))
 }

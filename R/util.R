@@ -29,7 +29,3 @@ ci_lower <- function(x, na.rm = FALSE) {
 ci_upper <- function(x, na.rm = FALSE) {
   stats::quantile(x, 0.975, na.rm = na.rm)
 }
-
-chr_to_quo <- function(x) {
-  x %>% purrr::map(~.x %>% lazyeval::as_name() %>% rlang::new_quosure())
-}

@@ -1,4 +1,4 @@
-if (getRversion() >= "2.15.1") utils::globalVariables("stat")
+if (getRversion() >= "2.15.1") utils::globalVariables(c("stat", ".id", "strap"))
 
 #' @importFrom dplyr "%>%"
 #' @importFrom dplyr n
@@ -22,11 +22,11 @@ NULL
 #' @param ... Other arguments passed from generic.
 #'
 #' @examples
-#' ## Mean and 95% confidence interval for 1000 samples from a normal distribution
-#' x <- rnorm(1000, mean = 0, sd = 1)
+#' ## Mean and 95% confidence interval for 500 samples from a normal distribution
+#' x <- rnorm(500, mean = 0, sd = 1)
 #' tidyboot(x, statistics_functions = list("ci_lower" = ci_lower,
-#'                                           "mean" = mean,
-#'                                           "ci_upper" = ci_upper))
+#'                                         "mean" = mean,
+#'                                         "ci_upper" = ci_upper))
 #' @export
 tidyboot.numeric <- function(data,
                              summary_function = mean,
@@ -56,8 +56,8 @@ tidyboot.numeric <- function(data,
 #' @inheritParams tidyboot.numeric
 #'
 #' @examples
-#' ## Mean and 95% confidence interval for 1000 samples from a binomial distribution
-#' x <- as.logical(rbinom(1000, 1, 0.5))
+#' ## Mean and 95% confidence interval for 500 samples from a binomial distribution
+#' x <- as.logical(rbinom(500, 1, 0.5))
 #' tidyboot(x, statistics_functions = c(ci_lower, mean, ci_upper))
 #' @export
 tidyboot.logical <- function(data,
@@ -91,10 +91,10 @@ tidyboot.logical <- function(data,
 #' @param ... Other arguments passed from generic.
 #'
 #' @examples
-#' ## Mean and 95% confidence interval for 1000 samples from two different normal distributions
+#' ## Mean and 95% confidence interval for 500 samples from two different normal distributions
 #' require(dplyr)
-#' gauss1 <- data_frame(value = rnorm(1000, mean = 0, sd = 1), condition = 1)
-#' gauss2 <- data_frame(value = rnorm(1000, mean = 2, sd = 3), condition = 2)
+#' gauss1 <- data_frame(value = rnorm(500, mean = 0, sd = 1), condition = 1)
+#' gauss2 <- data_frame(value = rnorm(500, mean = 2, sd = 3), condition = 2)
 #' df <- bind_rows(gauss1, gauss2)
 #' df %>% group_by(condition) %>%
 #'   tidyboot(column = value, summary_function = mean,
@@ -193,22 +193,24 @@ tidyboot.data.frame <- function(data,
 #' @param column A column of \code{data} to bootstrap over.
 #' @param nboot The number of bootstrap samples to take (defaults to
 #'   \code{1000}).
+#' @param na.rm A logical value indicating whether NA values should be stripped
+#'   before the computation proceeds.
 #' @examples
-#' ## Mean and 95% confidence interval for 1000 samples from two different normal distributions
+#' ## Mean and 95% confidence interval for 500 samples from two different normal distributions
 #' require(dplyr)
-#' gauss1 <- data_frame(value = rnorm(1000, mean = 0, sd = 1), condition = 1)
-#' gauss2 <- data_frame(value = rnorm(1000, mean = 2, sd = 3), condition = 2)
+#' gauss1 <- data_frame(value = rnorm(500, mean = 0, sd = 1), condition = 1)
+#' gauss2 <- data_frame(value = rnorm(500, mean = 2, sd = 3), condition = 2)
 #' df <- bind_rows(gauss1, gauss2)
 #' df %>%
 #'  group_by(condition) %>%
 #'  tidyboot_mean(column = value)
 #' @export
-tidyboot_mean <- function(data, column, nboot = 1000) {
+tidyboot_mean <- function(data, column, nboot = 1000, na.rm = FALSE) {
 
   column <- rlang::enquo(column)
 
   summary_function <- function(df) {
-    df %>% dplyr::summarise(stat = mean(!!column))
+    df %>% dplyr::summarise(stat = mean(!!column, na.rm = na.rm))
   }
 
   statistics_functions <- function(df) {
@@ -223,6 +225,7 @@ tidyboot_mean <- function(data, column, nboot = 1000) {
            nboot = nboot)
 
 }
+
 
 #' Non-parametric bootstrap with multiple sample statistics
 #'

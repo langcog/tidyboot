@@ -33,10 +33,10 @@ each set of samples as a single column of a data frame indicated by
 Computes arbitrary bootstrap statistics on univariate data.
 }
 \examples{
-## Mean and 95\% confidence interval for 1000 samples from two different normal distributions
+## Mean and 95\% confidence interval for 500 samples from two different normal distributions
 require(dplyr)
-gauss1 <- data_frame(value = rnorm(1000, mean = 0, sd = 1), condition = 1)
-gauss2 <- data_frame(value = rnorm(1000, mean = 2, sd = 3), condition = 2)
+gauss1 <- data_frame(value = rnorm(500, mean = 0, sd = 1), condition = 1)
+gauss2 <- data_frame(value = rnorm(500, mean = 2, sd = 3), condition = 2)
 df <- bind_rows(gauss1, gauss2)
 df \%>\% group_by(condition) \%>\%
   tidyboot(column = value, summary_function = mean,

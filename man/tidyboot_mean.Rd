@@ -5,7 +5,7 @@
 \title{Nonparemetric Bootstrap and Empirical central tendency for data frames
 Designed to make standard use of \code{tidyboot.data.frame} easier}
 \usage{
-tidyboot_mean(data, column, nboot = 1000)
+tidyboot_mean(data, column, nboot = 1000, na.rm = FALSE)
 }
 \arguments{
 \item{data}{A data frame.}
@@ -14,6 +14,9 @@ tidyboot_mean(data, column, nboot = 1000)
 
 \item{nboot}{The number of bootstrap samples to take (defaults to
 \code{1000}).}
+
+\item{na.rm}{A logical value indicating whether NA values should be stripped
+before the computation proceeds.}
 }
 \description{
 Computes arbitrary bootstrap statistics on univariate data. NOTE: Both
@@ -21,10 +24,10 @@ empirical functions and bootstrapping functions will be computed over the
 grouping variables currently specified for the data frame.
 }
 \examples{
-## Mean and 95\% confidence interval for 1000 samples from two different normal distributions
+## Mean and 95\% confidence interval for 500 samples from two different normal distributions
 require(dplyr)
-gauss1 <- data_frame(value = rnorm(1000, mean = 0, sd = 1), condition = 1)
-gauss2 <- data_frame(value = rnorm(1000, mean = 2, sd = 3), condition = 2)
+gauss1 <- data_frame(value = rnorm(500, mean = 0, sd = 1), condition = 1)
+gauss2 <- data_frame(value = rnorm(500, mean = 2, sd = 3), condition = 2)
 df <- bind_rows(gauss1, gauss2)
 df \%>\%
  group_by(condition) \%>\%

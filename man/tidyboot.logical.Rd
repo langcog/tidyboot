@@ -31,7 +31,7 @@ set of summary values from all samples.}
 Computes arbitrary bootstrap statistics on univariate data.
 }
 \examples{
-## Mean and 95\% confidence interval for 1000 samples from a binomial distribution
-x <- as.logical(rbinom(1000, 1, 0.5))
+## Mean and 95\% confidence interval for 500 samples from a binomial distribution
+x <- as.logical(rbinom(500, 1, 0.5))
 tidyboot(x, statistics_functions = c(ci_lower, mean, ci_upper))
 }
