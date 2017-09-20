@@ -5,7 +5,7 @@
 \title{Nonparemetric Bootstrap and Empirical central tendency for data frames
 Designed to make standard use of \code{tidyboot.data.frame} easier}
 \usage{
-tidyboot_mean(data, column, nboot = 1000, na.rm = FALSE)
+tidyboot_mean(data, column, nboot = 1000)
 }
 \arguments{
 \item{data}{A data frame.}
@@ -28,5 +28,5 @@ gauss2 <- data_frame(value = rnorm(1000, mean = 2, sd = 3), condition = 2)
 df <- bind_rows(gauss1, gauss2)
 df \%>\%
  group_by(condition) \%>\%
- tidyboot_default(column = value)
+ tidyboot_mean(column = value)
 }
