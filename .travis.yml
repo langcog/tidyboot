@@ -1,0 +1,7 @@
+language: r
+cache: packages
+notifications:
+  email:
+    on_success: change
+    on_failure: always
+    slack: langcog:1bo00YJq56szVV9kHm6lnjHK
