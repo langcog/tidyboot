@@ -7,7 +7,7 @@
 tidyboot(data, ...)
 }
 \arguments{
-\item{data}{A data structure containg the data to bootstrap.}
+\item{data}{A data structure containing the data to bootstrap.}
 
 \item{...}{Additional arguments passed to particular methods.}
 }

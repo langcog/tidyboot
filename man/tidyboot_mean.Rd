@@ -2,7 +2,7 @@
 % Please edit documentation in R/tidyboot.R
 \name{tidyboot_mean}
 \alias{tidyboot_mean}
-\title{Nonparemetric Bootstrap and Empirical central tendency for data frames
+\title{Non-parametric bootstrap and empirical central tendency for data frames
 Designed to make standard use of \code{tidyboot.data.frame} easier}
 \usage{
 tidyboot_mean(data, column, nboot = 1000, na.rm = FALSE)

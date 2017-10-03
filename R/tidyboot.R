@@ -185,7 +185,7 @@ tidyboot.data.frame <- function(data,
 }
 
 
-#' Nonparemetric Bootstrap and Empirical central tendency for data frames
+#' Non-parametric bootstrap and empirical central tendency for data frames
 #' Designed to make standard use of \code{tidyboot.data.frame} easier
 #'
 #' Computes arbitrary bootstrap statistics on univariate data. NOTE: Both
@@ -236,7 +236,7 @@ tidyboot_mean <- function(data, column, nboot = 1000, na.rm = FALSE) {
 #' structures. The function invokes particular methods which depend on the class
 #' of the first argument.
 #'
-#' @param data A data structure containg the data to bootstrap.
+#' @param data A data structure containing the data to bootstrap.
 #' @param ... Additional arguments passed to particular methods.
 #'
 #' @examples
