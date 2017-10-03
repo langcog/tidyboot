@@ -20,6 +20,11 @@ knitr::opts_chunk$set(
 
 ## Installation
 
+You can install tidyboot from CRAN with:
+```{r, eval = FALSE}
+install.packages("tidyboot")
+```
+
 You can install tidyboot from github with:
 
 ```{r gh-installation, eval = FALSE}
