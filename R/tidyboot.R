@@ -213,13 +213,13 @@ tidyboot_mean <- function(data, column, nboot = 1000, na.rm = FALSE) {
   column <- rlang::enquo(column)
 
   summary_function <- function(df) {
-    df %>% dplyr::summarise(stat = mean(!!column, na.rm = na.rm))
+    df %>% dplyr::summarise(mean = mean(!!column, na.rm = na.rm))
   }
 
   statistics_functions <- function(df) {
-    df %>% dplyr::summarise(ci_lower = ci_lower(stat),
-                            mean = mean(stat),
-                            ci_upper = ci_upper(stat))
+    df %>% dplyr::summarise(ci_lower = ci_lower(mean),
+                            mean = mean(mean),
+                            ci_upper = ci_upper(mean))
   }
 
   tidyboot(data,
