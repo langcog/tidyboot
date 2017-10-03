@@ -2,6 +2,7 @@ if (getRversion() >= "2.15.1") utils::globalVariables(c("stat", ".id", "strap"))
 
 #' @importFrom dplyr "%>%"
 #' @importFrom dplyr n
+#' @importFrom rlang ":="
 NULL
 
 #' Non-parametric bootstrap for numeric vector data
@@ -116,25 +117,27 @@ tidyboot.data.frame <- function(data,
 
   if (rlang::quo_is_null(column)) {
     call_summary_function <- summary_function
+    call_statistics_functions <- statistics_functions
+
   } else {
+
     summary_function <- rlang::enquo(summary_function)
+    summary_function_name <- rlang::quo_name(summary_function)
     call_summary_function <- function(df) {
       df %>% dplyr::summarise_at(dplyr::vars(!!column),
-                                 dplyr::funs(!!summary_function))
+                                 dplyr::funs(!!summary_function)) %>%
+        dplyr::rename(!!summary_function_name := !!column)
     }
-  }
 
-  if (rlang::quo_is_null(column)) {
-    call_statistics_functions <- statistics_functions
-  } else {
     if (length(statistics_functions) == 1 &
         !("list" %in% class(statistics_functions))) {
       statistics_functions <- list(statistics_functions)
     }
     call_statistics_functions <- function(df) {
-      df %>% dplyr::summarise_at(dplyr::vars(!!column),
+      df %>% dplyr::summarise_at(dplyr::vars(!!summary_function_name),
                                  dplyr::funs(!!!statistics_functions))
     }
+
   }
 
   empirical_summary <- data %>%
