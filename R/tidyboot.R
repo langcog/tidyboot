@@ -1,4 +1,4 @@
-if (getRversion() >= "2.15.1") utils::globalVariables(c("stat", ".id", "strap"))
+utils::globalVariables(c("stat", ".id", "strap"))
 
 #' @importFrom dplyr "%>%"
 #' @importFrom dplyr n

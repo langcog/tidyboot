@@ -1,7 +1,7 @@
 Package: tidyboot
 Type: Package
 Title: Tidyverse-Compatible Bootstrapping
-Version: 0.1.0.9000
+Version: 0.1.1
 Authors@R: c(
     person("Mika", "Braginsky", email = "mika.br@gmail.com", role = c("aut", "cre")),
     person("Daniel", "Yurovsky", email = "dyurovsky@gmail.com", role = c("aut"))
@@ -18,6 +18,6 @@ RoxygenNote: 6.0.1
 Imports: 
   dplyr (>= 0.7.4),
   modelr (>= 0.1.1),
-  purrr (>= 0.2.3),
-  rlang (>= 0.1.2),
-  tidyr (>= 0.7.1)
+  purrr (>= 0.2.4),
+  rlang (>= 0.1.6),
+  tidyr (>= 0.7.2)

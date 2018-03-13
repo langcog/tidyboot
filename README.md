@@ -38,10 +38,10 @@ df %>%
   group_by(condition) %>%
   tidyboot_mean(column = value)
 #> # A tibble: 2 x 6
-#>   condition     n empirical_mean    ci_lower       mean   ci_upper
-#>       <dbl> <int>          <dbl>       <dbl>      <dbl>      <dbl>
-#> 1         1   500      0.0415903 -0.04795741 0.04006775 0.04006775
-#> 2         2   500      2.0494461  1.80454457 2.05265278 2.05265278
+#>   condition     n empirical_stat  ci_lower        mean   ci_upper
+#>       <dbl> <int>          <dbl>     <dbl>       <dbl>      <dbl>
+#> 1         1   500    -0.02292831 -0.114664 -0.02196269 0.06232765
+#> 2         2   500     2.02781100  1.755141  2.02955494 2.30626508
 ```
 
 For bootstrapping any statistic and any properties of its sampling distribution, use `tidyboot()`.
@@ -56,10 +56,10 @@ df %>%
   tidyboot(column = value, summary_function = median,
            statistics_functions = list("mean" = mean, "sd" = sd))
 #> # A tibble: 2 x 5
-#>   condition     n empirical_median       mean         sd
-#>       <dbl> <int>            <dbl>      <dbl>      <dbl>
-#> 1         1   500       0.05551952 0.05217279 0.05283488
-#> 2         2   500       2.07596528 2.06370324 0.19673194
+#>   condition     n empirical_median         mean         sd
+#>       <dbl> <int>            <dbl>        <dbl>      <dbl>
+#> 1         1   500     -0.006468345 -0.005842842 0.05544625
+#> 2         2   500      1.995112455  2.011381756 0.20658963
 ```
 
 ``` r
@@ -68,8 +68,8 @@ df %>%
   tidyboot(summary_function = function(x) x %>% summarise(median = median(value)),
            statistics_functions = function(x) x %>% summarise_at(vars(median), funs(mean, sd)))
 #> # A tibble: 2 x 5
-#>   condition     n empirical_median       mean         sd
-#>       <dbl> <int>            <dbl>      <dbl>      <dbl>
-#> 1         1   500       0.05551952 0.04991507 0.05351953
-#> 2         2   500       2.07596528 2.06533995 0.19299904
+#>   condition     n empirical_median         mean         sd
+#>       <dbl> <int>            <dbl>        <dbl>      <dbl>
+#> 1         1   500     -0.006468345 -0.006287976 0.05505858
+#> 2         2   500      1.995112455  2.006877243 0.20645516
 ```
