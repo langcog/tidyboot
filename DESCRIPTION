@@ -8,7 +8,7 @@ Authors@R: c(
     )
 Description: Compute arbitrary non-parametric bootstrap statistics on data in
     tidy data frames.
-Depends: R (>= 3.4.1)
+Depends: R (>= 3.4.0)
 License: GPL-3
 URL: https://github.com/langcog/tidyboot
 BugReports: http://github.com/langcog/tidyboot/issues
