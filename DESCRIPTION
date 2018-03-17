@@ -1,7 +1,7 @@
 Package: tidyboot
 Type: Package
 Title: Tidyverse-Compatible Bootstrapping
-Version: 0.1.1
+Version: 0.1.1.9000
 Authors@R: c(
     person("Mika", "Braginsky", email = "mika.br@gmail.com", role = c("aut", "cre")),
     person("Daniel", "Yurovsky", email = "dyurovsky@gmail.com", role = c("aut"))
