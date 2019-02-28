@@ -29,6 +29,7 @@ require(dplyr)
 gauss1 <- data_frame(value = rnorm(500, mean = 0, sd = 1), condition = 1)
 gauss2 <- data_frame(value = rnorm(500, mean = 2, sd = 3), condition = 2)
 df <- bind_rows(gauss1, gauss2)
+
 df \%>\%
  group_by(condition) \%>\%
  tidyboot_mean(column = value)

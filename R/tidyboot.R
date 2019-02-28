@@ -97,10 +97,17 @@ tidyboot.logical <- function(data,
 #' gauss1 <- data_frame(value = rnorm(500, mean = 0, sd = 1), condition = 1)
 #' gauss2 <- data_frame(value = rnorm(500, mean = 2, sd = 3), condition = 2)
 #' df <- bind_rows(gauss1, gauss2)
+#'
 #' df %>% group_by(condition) %>%
-#'   tidyboot(summary_function = function(x) x %>% summarise(mean = mean(value)),
+#'   tidyboot(summary_function = function(x) x %>% summarise(stat = mean(value)),
 #'            statistics_functions = function(x) x %>%
-#'            summarise_at(vars(mean), funs(ci_upper, mean, ci_lower)))
+#'            summarise_at(vars(stat), funs(ci_lower, mean, ci_upper)))
+#' df %>% group_by(condition) %>%
+#'   tidyboot(column = value, summary_function = mean,
+#'            statistics_functions = list("ci_lower" = ci_lower,
+#'                                        "ci_upper" = ci_upper,
+#'                                        "mean" = mean))
+#'
 #' @export
 tidyboot.data.frame <- function(data,
                                 column = NULL,
@@ -201,12 +208,14 @@ tidyboot.data.frame <- function(data,
 #' gauss1 <- data_frame(value = rnorm(500, mean = 0, sd = 1), condition = 1)
 #' gauss2 <- data_frame(value = rnorm(500, mean = 2, sd = 3), condition = 2)
 #' df <- bind_rows(gauss1, gauss2)
+#'
 #' df %>%
 #'  group_by(condition) %>%
 #'  tidyboot_mean(column = value)
 #' @export
 tidyboot_mean <- function(data, column, nboot = 1000, na.rm = FALSE) {
 
+  stopifnot(!missing(column))
   column <- rlang::enquo(column)
 
   summary_function <- function(df) {
