@@ -48,11 +48,10 @@ df <- bind_rows(gauss1, gauss2)
 df \%>\% group_by(condition) \%>\%
   tidyboot(summary_function = function(x) x \%>\% summarise(stat = mean(value)),
            statistics_functions = function(x) x \%>\%
-           summarise_at(vars(stat), funs(ci_lower, mean, ci_upper)))
+           summarise_at(vars(stat), funs(ci_lower, ci_upper)))
 df \%>\% group_by(condition) \%>\%
   tidyboot(column = value, summary_function = mean,
            statistics_functions = list("ci_lower" = ci_lower,
-                                       "ci_upper" = ci_upper,
-                                       "mean" = mean))
+                                       "ci_upper" = ci_upper))
 
 }
