@@ -3,6 +3,7 @@ utils::globalVariables(c("stat", ".id", "strap"))
 #' @importFrom dplyr "%>%"
 #' @importFrom dplyr n
 #' @importFrom rlang ":="
+#' @importFrom rlang .data
 NULL
 
 #' Non-parametric bootstrap for numeric vector data
@@ -101,12 +102,11 @@ tidyboot.logical <- function(data,
 #' df %>% group_by(condition) %>%
 #'   tidyboot(summary_function = function(x) x %>% summarise(stat = mean(value)),
 #'            statistics_functions = function(x) x %>%
-#'            summarise_at(vars(stat), funs(ci_lower, mean, ci_upper)))
+#'            summarise_at(vars(stat), funs(ci_lower, ci_upper)))
 #' df %>% group_by(condition) %>%
 #'   tidyboot(column = value, summary_function = mean,
 #'            statistics_functions = list("ci_lower" = ci_lower,
-#'                                        "ci_upper" = ci_upper,
-#'                                        "mean" = mean))
+#'                                        "ci_upper" = ci_upper))
 #'
 #' @export
 tidyboot.data.frame <- function(data,
@@ -120,14 +120,28 @@ tidyboot.data.frame <- function(data,
   column <- rlang::enquo(column)
 
   if (rlang::quo_is_null(column)) {
-    call_summary_function <- summary_function
-    call_statistics_functions <- statistics_functions
+    if(!rlang::is_null(data_groups)) {
+      call_summary_function <- function(df) {
+        df %>% dplyr::group_by(!!!data_groups) %>%
+        summary_function
+      }
+      call_statistics_functions <- function(df) {
+        df %>% dplyr::group_by(!!!data_groups) %>%
+          statistics_functions
+      }
+    } else {
+      call_summary_function <- summary_function
+      call_statistics_functions <- statistics_functions
+    }
 
   } else {
 
     summary_function <- rlang::enquo(summary_function)
     summary_function_name <- rlang::quo_name(summary_function)
     call_summary_function <- function(df) {
+      if(!rlang::is_null(data_groups))
+        df <- df %>% dplyr::group_by(!!!data_groups)
+
       df %>% dplyr::summarise_at(dplyr::vars(!!column),
                                  dplyr::funs(!!summary_function)) %>%
         dplyr::rename(!!summary_function_name := !!column)
@@ -138,8 +152,11 @@ tidyboot.data.frame <- function(data,
       statistics_functions <- list(statistics_functions)
     }
     call_statistics_functions <- function(df) {
-      df %>% dplyr::summarise_at(dplyr::vars(!!summary_function_name),
-                                 dplyr::funs(!!!statistics_functions))
+      if(!rlang::is_null(data_groups))
+        df <- df %>% dplyr::group_by(!!!data_groups)
+
+        df %>% dplyr::summarise_at(dplyr::vars(!!summary_function_name),
+                                  dplyr::funs(!!!statistics_functions))
     }
 
   }
@@ -155,24 +172,18 @@ tidyboot.data.frame <- function(data,
     dplyr::summarise(n = n())
 
   samples <- data %>%
-    modelr::bootstrap(n = nboot) %>%
-    dplyr::mutate(strap = purrr::map(strap, dplyr::as_data_frame)) %>%
-    tidyr::unnest()
+    rsample::bootstraps(times = nboot)
 
-  if (!rlang::is_null(data_groups)) {
-    samples <- samples %>% dplyr::group_by(!!!data_groups, .id)
-  } else {
-    samples <- samples %>% dplyr::group_by(.id)
-  }
-
+  #splits comes from rsample. need to use .data to avoid CMD check issues
   sample_vals <- samples %>%
-    call_summary_function()
-
-  if (!is.null(data_groups)) {
-    sample_vals <- sample_vals %>% dplyr::group_by(!!!data_groups)
-  }
+    dplyr::mutate(models = purrr::map(.data$splits, ~.x %>%
+                                 rsample::analysis() %>%
+                                 call_summary_function())) %>%
+    dplyr::select(-.data$splits) %>%
+    tidyr::unnest(c(.data$models))
 
   booted_vals <- call_statistics_functions(sample_vals)
+
 
   if (nrow(empirical_summary) > 1) {
     n_summary %>%
@@ -219,13 +230,12 @@ tidyboot_mean <- function(data, column, nboot = 1000, na.rm = FALSE) {
   column <- rlang::enquo(column)
 
   summary_function <- function(df) {
-    df %>% dplyr::summarise(stat = mean(!!column, na.rm = na.rm))
+    df %>% dplyr::summarise(mean = mean(!!column, na.rm = na.rm))
   }
 
   statistics_functions <- function(df) {
-    df %>% dplyr::summarise(ci_lower = ci_lower(stat),
-                            mean = mean(stat),
-                            ci_upper = ci_upper(stat))
+    df %>% dplyr::summarise(ci_lower = ci_lower(mean),
+                            ci_upper = ci_upper(mean))
   }
 
   tidyboot(data,

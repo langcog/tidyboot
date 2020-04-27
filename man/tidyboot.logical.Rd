@@ -4,8 +4,15 @@
 \alias{tidyboot.logical}
 \title{Non-parametric bootstrap for logical vector data}
 \usage{
-\method{tidyboot}{logical}(data, summary_function = mean,
-  statistics_functions, nboot = 1000, size = 1, replace = TRUE, ...)
+\method{tidyboot}{logical}(
+  data,
+  summary_function = mean,
+  statistics_functions,
+  nboot = 1000,
+  size = 1,
+  replace = TRUE,
+  ...
+)
 }
 \arguments{
 \item{data}{A logical vector of data to bootstrap over.}
