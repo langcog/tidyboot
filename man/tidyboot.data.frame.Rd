@@ -4,14 +4,8 @@
 \alias{tidyboot.data.frame}
 \title{Non-parametric bootstrap for data frames}
 \usage{
-\method{tidyboot}{data.frame}(
-  data,
-  column = NULL,
-  summary_function = mean,
-  statistics_functions,
-  nboot = 1000,
-  ...
-)
+\method{tidyboot}{data.frame}(data, column = NULL,
+  summary_function = mean, statistics_functions, nboot = 1000, ...)
 }
 \arguments{
 \item{data}{A data frame.}
@@ -48,10 +42,11 @@ df <- bind_rows(gauss1, gauss2)
 df \%>\% group_by(condition) \%>\%
   tidyboot(summary_function = function(x) x \%>\% summarise(stat = mean(value)),
            statistics_functions = function(x) x \%>\%
-           summarise_at(vars(stat), funs(ci_lower, ci_upper)))
+           summarise_at(vars(stat), funs(ci_lower, mean, ci_upper)))
 df \%>\% group_by(condition) \%>\%
   tidyboot(column = value, summary_function = mean,
            statistics_functions = list("ci_lower" = ci_lower,
-                                       "ci_upper" = ci_upper))
+                                       "ci_upper" = ci_upper,
+                                       "mean" = mean))
 
 }
