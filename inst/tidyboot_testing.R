@@ -34,7 +34,7 @@ modelr_boot <- function(df, nboot = 1000) {
   booted <- df %>%
     modelr::bootstrap(nboot) %>%
     mutate(strap = map(strap, as_data_frame)) %>%
-    unnest()
+    unnest_legacy()
 
   booted %>%
     group_by(.id, condition) %>%
