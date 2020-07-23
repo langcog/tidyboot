@@ -16,7 +16,7 @@ modelr_boot <- function(df, nboot = 1000) {
     modelr::bootstrap(nboot)
 
   booted$strap %>%
-    map_df(~.x %>% as_data_frame() %>%
+    map_df(~.x %>% as_tibble() %>%
              group_by(condition) %>%
              summarise(stat = mean(value, na.rm = FALSE))) %>%
     group_by(condition) %>%
@@ -33,7 +33,7 @@ system.time(
 modelr_boot <- function(df, nboot = 1000) {
   booted <- df %>%
     modelr::bootstrap(nboot) %>%
-    mutate(strap = map(strap, as_data_frame)) %>%
+    mutate(strap = map(strap, as_tibble)) %>%
     unnest_legacy()
 
   booted %>%
@@ -58,7 +58,7 @@ modelr_boot_na.rm <- function(df, nboot = 1000, na.rm = FALSE) {
     modelr::bootstrap(nboot)
 
   booted$strap %>%
-    map_df(~.x %>% as_data_frame() %>%
+    map_df(~.x %>% as_tibble() %>%
              group_by(condition) %>%
              summarise(stat = mean(value, na.rm = na.rm))) %>%
     group_by(condition) %>%
