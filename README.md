@@ -30,8 +30,8 @@ For the simplest use case of bootstrapping the mean and getting the mean and con
 library(dplyr)
 library(tidyboot)
 
-gauss1 <- data_frame(value = rnorm(500, mean = 0, sd = 1), condition = 1)
-gauss2 <- data_frame(value = rnorm(500, mean = 2, sd = 3), condition = 2)
+gauss1 <- tibble(value = rnorm(500, mean = 0, sd = 1), condition = 1)
+gauss2 <- tibble(value = rnorm(500, mean = 2, sd = 3), condition = 2)
 df <- bind_rows(gauss1, gauss2)
 
 df %>%
@@ -66,7 +66,7 @@ df %>%
 df %>%
   group_by(condition) %>%
   tidyboot(summary_function = function(x) x %>% summarise(median = median(value)),
-           statistics_functions = function(x) x %>% summarise_at(vars(median), funs(mean, sd)))
+           statistics_functions = function(x) x %>% summarise(across(median, list("mean" = mean, "sd" = sd))))
 #> # A tibble: 2 x 5
 #>   condition     n empirical_median         mean         sd
 #>       <dbl> <int>            <dbl>        <dbl>      <dbl>
