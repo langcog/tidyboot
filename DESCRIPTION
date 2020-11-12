@@ -1,7 +1,7 @@
 Package: tidyboot
 Type: Package
 Title: Tidyverse-Compatible Bootstrapping
-Version: 0.1.1.9002
+Version: 0.1.2
 Authors@R: c(
     person("Mika", "Braginsky", email = "mika.br@gmail.com", role = c("aut", "cre")),
     person("Daniel", "Yurovsky", email = "dyurovsky@gmail.com", role = c("aut"))
@@ -15,7 +15,7 @@ BugReports: http://github.com/langcog/tidyboot/issues
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.1.1
-Imports: 
+Imports:
   dplyr (>= 0.7.4),
   modelr (>= 0.1.1),
   purrr (>= 0.2.4),
