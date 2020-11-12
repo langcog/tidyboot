@@ -41,9 +41,8 @@ tidyboot.numeric <- function(data,
                                           replace = replace)))
   }
 
-  all_samples <- dplyr::data_frame(sample = replicate(nboot, one_sample())) %>%
-    dplyr::summarise_at(dplyr::vars(sample),
-                        dplyr::funs(!!!statistics_functions))
+  all_samples <- dplyr::tibble(sample = replicate(nboot, one_sample())) %>%
+    dplyr::summarise(dplyr::across(sample, statistics_functions))
 
   return(all_samples)
 
@@ -94,20 +93,18 @@ tidyboot.logical <- function(data,
 #' @examples
 #' ## Mean and 95% confidence interval for 500 samples from two different normal distributions
 #' require(dplyr)
-#' gauss1 <- data_frame(value = rnorm(500, mean = 0, sd = 1), condition = 1)
-#' gauss2 <- data_frame(value = rnorm(500, mean = 2, sd = 3), condition = 2)
+#' gauss1 <- tibble(value = rnorm(500, mean = 0, sd = 1), condition = 1)
+#' gauss2 <- tibble(value = rnorm(500, mean = 2, sd = 3), condition = 2)
 #' df <- bind_rows(gauss1, gauss2)
+#'
+#' mean_ci_funs <- list("ci_lower" = ci_lower, "mean" = mean, "ci_upper" = ci_upper)
+#' df %>% group_by(condition) %>%
+#'   tidyboot(column = value, summary_function = mean, statistics_functions = mean_ci_funs)
 #'
 #' df %>% group_by(condition) %>%
 #'   tidyboot(summary_function = function(x) x %>% summarise(stat = mean(value)),
 #'            statistics_functions = function(x) x %>%
-#'            summarise_at(vars(stat), funs(ci_lower, mean, ci_upper)))
-#' df %>% group_by(condition) %>%
-#'   tidyboot(column = value, summary_function = mean,
-#'            statistics_functions = list("ci_lower" = ci_lower,
-#'                                        "ci_upper" = ci_upper,
-#'                                        "mean" = mean))
-#'
+#'              summarise(across(stat, mean_ci_funs, .names = "{.fn}")))
 #' @export
 tidyboot.data.frame <- function(data,
                                 column = NULL,
@@ -128,8 +125,8 @@ tidyboot.data.frame <- function(data,
     summary_function <- rlang::enquo(summary_function)
     summary_function_name <- rlang::quo_name(summary_function)
     call_summary_function <- function(df) {
-      df %>% dplyr::summarise_at(dplyr::vars(!!column),
-                                 dplyr::funs(!!summary_function)) %>%
+      df %>%
+        dplyr::summarise(dplyr::across(!!column, !!summary_function)) %>%
         dplyr::rename(!!summary_function_name := !!column)
     }
 
@@ -138,8 +135,10 @@ tidyboot.data.frame <- function(data,
       statistics_functions <- list(statistics_functions)
     }
     call_statistics_functions <- function(df) {
-      df %>% dplyr::summarise_at(dplyr::vars(!!summary_function_name),
-                                 dplyr::funs(!!!statistics_functions))
+      df %>% dplyr::summarise(
+        dplyr::across(!!summary_function_name, statistics_functions,
+                      .names = "{.fn}")
+      )
     }
 
   }
@@ -205,8 +204,8 @@ tidyboot.data.frame <- function(data,
 #' @examples
 #' ## Mean and 95% confidence interval for 500 samples from two different normal distributions
 #' require(dplyr)
-#' gauss1 <- data_frame(value = rnorm(500, mean = 0, sd = 1), condition = 1)
-#' gauss2 <- data_frame(value = rnorm(500, mean = 2, sd = 3), condition = 2)
+#' gauss1 <- tibble(value = rnorm(500, mean = 0, sd = 1), condition = 1)
+#' gauss2 <- tibble(value = rnorm(500, mean = 2, sd = 3), condition = 2)
 #' df <- bind_rows(gauss1, gauss2)
 #'
 #' df %>%

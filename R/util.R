@@ -11,7 +11,7 @@
 #' ci_lower(x)
 #' @export
 ci_lower <- function(x, na.rm = FALSE) {
-  stats::quantile(x, 0.025, na.rm = na.rm)
+  unname(stats::quantile(x, 0.025, na.rm = na.rm))
 }
 
 #' Confidence interval (upper 97.5\%)
@@ -27,5 +27,5 @@ ci_lower <- function(x, na.rm = FALSE) {
 #' ci_upper(x)
 #' @export
 ci_upper <- function(x, na.rm = FALSE) {
-  stats::quantile(x, 0.975, na.rm = na.rm)
+  unname(stats::quantile(x, 0.975, na.rm = na.rm))
 }

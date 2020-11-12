@@ -26,8 +26,8 @@ grouping variables currently specified for the data frame.
 \examples{
 ## Mean and 95\% confidence interval for 500 samples from two different normal distributions
 require(dplyr)
-gauss1 <- data_frame(value = rnorm(500, mean = 0, sd = 1), condition = 1)
-gauss2 <- data_frame(value = rnorm(500, mean = 2, sd = 3), condition = 2)
+gauss1 <- tibble(value = rnorm(500, mean = 0, sd = 1), condition = 1)
+gauss2 <- tibble(value = rnorm(500, mean = 2, sd = 3), condition = 2)
 df <- bind_rows(gauss1, gauss2)
 
 df \%>\%
