@@ -4,8 +4,14 @@
 \alias{tidyboot.data.frame}
 \title{Non-parametric bootstrap for data frames}
 \usage{
-\method{tidyboot}{data.frame}(data, column = NULL,
-  summary_function = mean, statistics_functions, nboot = 1000, ...)
+\method{tidyboot}{data.frame}(
+  data,
+  column = NULL,
+  summary_function = mean,
+  statistics_functions,
+  nboot = 1000,
+  ...
+)
 }
 \arguments{
 \item{data}{A data frame.}

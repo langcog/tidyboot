@@ -4,8 +4,15 @@
 \alias{tidyboot.numeric}
 \title{Non-parametric bootstrap for numeric vector data}
 \usage{
-\method{tidyboot}{numeric}(data, summary_function = mean,
-  statistics_functions, nboot = 1000, size = 1, replace = TRUE, ...)
+\method{tidyboot}{numeric}(
+  data,
+  summary_function = mean,
+  statistics_functions,
+  nboot = 1000,
+  size = 1,
+  replace = TRUE,
+  ...
+)
 }
 \arguments{
 \item{data}{A numeric vector of data to bootstrap over.}
