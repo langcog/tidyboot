@@ -1,7 +1,7 @@
 Package: tidyboot
 Type: Package
 Title: Tidyverse-Compatible Bootstrapping
-Version: 0.1.2
+Version: 0.1.3
 Authors@R: c(
     person("Mika", "Braginsky", email = "mika.br@gmail.com", role = c("aut", "cre")),
     person("Daniel", "Yurovsky", email = "dyurovsky@gmail.com", role = c("aut"))
@@ -11,10 +11,9 @@ Description: Compute arbitrary non-parametric bootstrap statistics on data in
 Depends: R (>= 3.4.0)
 License: GPL-3
 URL: https://github.com/langcog/tidyboot
-BugReports: http://github.com/langcog/tidyboot/issues
+BugReports: https://github.com/langcog/tidyboot/issues
 Encoding: UTF-8
-LazyData: true
-RoxygenNote: 7.1.1
+RoxygenNote: 7.3.3
 Imports:
   dplyr (>= 0.7.4),
   modelr (>= 0.1.1),

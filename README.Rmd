@@ -14,6 +14,10 @@ knitr::opts_chunk$set(
 )
 ```
 
+<!-- badges: start -->
+[![R-CMD-check](https://github.com/langcog/tidyboot/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/langcog/tidyboot/actions/workflows/R-CMD-check.yaml)
+<!-- badges: end -->
+
 # tidyboot
 
 `tidyboot` let's you compute arbitrary non-parametric bootstrap statistics on data in tidy data frames.
